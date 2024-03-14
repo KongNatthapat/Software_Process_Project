@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+
+    <link rel="stylesheet" href="history.css">
+
+    <!----===== Boxicons CSS ===== -->
+    <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
+
+    <!----===== Iconscout CSS ===== -->
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+    <title>History</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="container-sidebar">
+            <nav class="sidebar close">
+                <header>
+                    <div class="image-text">
+                        <span class="image">
+                            <img src="logo_cs266.png" alt="">
+                        </span>
+                        <div class="text logo-text">
+                            <span class="name">Expense Tracker</span>
+                            <span class="profession">CS266</span>
+                        </div>
+                    </div>
+                    <i class='bx bx-chevron-right toggle'></i>
+                </header>
+
+                <div class="menu-bar">
+                    <div class="menu">
+
+                        <li class="nav-link">
+                            <a href="/">
+                                <i class='bx bx-home-alt icon'></i>
+                                <span class="text nav-text">HOME</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-link">
+                            <a href="tag">
+                                <i class='bx bx-tag icon'></i>
+                                <span class="text nav-text">TAG</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-link">
+                            <a href="history">
+                                <i class='bx bx-history icon'></i>
+                                <span class="text nav-text">HISTORY</span>
+                            </a>
+                        </li>
+
+
+                        </ul>
+                    </div>
+
+                    <div class="bottom-content">
+                        <!-- <li class="">
+                            <a href="#">
+                                <i class='bx bx-log-out icon' ></i>
+                                <span class="text nav-text">Logout</span>
+                            </a>
+                        </li> -->
+                        <li class="mode" id="theme-toggle">
+                            <div class="sun-moon">
+                                <i class='bx bx-moon icon moon'></i>
+                                <i class='bx bx-sun icon sun'></i>
+                            </div>
+                            <span class="mode-text text">Dark mode</span>
+                            <div class="toggle-switch">
+                                <span class="switch"></span>
+                            </div>
+                        </li>
+                      
+
+                    </div>
+                </div>
+            </nav>
+
+            <section class="home">
+
+
+
+
+                <div class="center" style="display: flex;justify-content: space-between;">
+                    <div class="container-home">
+                        <div class="text">History</div>
+                        <div class="title">
+                            <div class="monthTitle">
+                                <select name="month" id="month">
+                                </select>
+                                <!-- Drop down tags goes here -->
+                            </div>
+
+                        </div>
+                        <div id="activity">
+                            <!-- ACTIVITY -->
+
+                            <div class="activity">
+
+                            </div>
+                        </div>
+
+                    </div>
+
+
+
+                    <script>
+                        // Function to get the month name
+                        function getMonthName(monthIndex) {
+                            const months = [
+                                "January", "February", "March", "April", "May", "June",
+                                "July", "August", "September", "October", "November", "December"
+                            ];
+                            return months[monthIndex];
+                        }
+
+                        // Function to populate the select element with months
+                        function populateMonths() {
+                            const monthSelect = document.getElementById("month");
+
+                            // Get the current date
+                            const currentDate = new Date();
+                            let temp = currentDate.getMonth();
+
+                            // Loop to add the last 12 months to the select options
+                            for (let i = 0; i < 12; i++) {
+                                const monthIndex = (currentDate.getMonth() - i + 12) % 12;
+                                let year = currentDate.getFullYear();
+
+                                if (currentDate.getMonth() < monthIndex) {
+                                    year = currentDate.getFullYear() - 1;
+                                }
+
+                                const optionText = getMonthName(monthIndex) + ' ' + year;
+                                const optionValue = `${year}-${(monthIndex + 1).toString().padStart(2, '0')}`;
+
+                                // Create and append the option element
+                                const option = document.createElement("option");
+                                option.value = optionValue;
+                                option.text = optionText;
+
+                                monthSelect.add(option);
+                            }
+                        }
+
+                        // Call the function to populate the select elements
+                        populateMonths();
+
+                        document.getElementById("month").addEventListener("change", function () {
+                            const month = document.getElementById("month").value;
+                            const tag = document.getElementById("tags").value;
+                            console.log(this.value);
+                            // Fetch /history with the selected date as a query parameter
+                            fetch(`/historyData?month=${month}&&tag=${tag}`)
+                                .then(response => response.text())
+                                .then(html => {
+                                    // Update the content of the history container
+                                    document.getElementById('activity').innerHTML = html;
+                                })
+                                .catch(error => console.error('Error fetching /history:', error));
+                            
+
+                        });
+                        document.getElementById("tags").addEventListener("change", function () {
+                            console.log(this.value);
+                        });
+
+                        document.getElementById("tags").addEventListener("change", function () {
+                            const month = document.getElementById("month").value;
+                            const tag = document.getElementById("tags").value;
+                            console.log(this.value);
+                            // Fetch /history with the selected date as a query parameter
+                            fetch(`/historyData?month=${month}&&tag=${tag}`)
+                                .then(response => response.text())
+                                .then(html => {
+                                    // Update the content of the history container
+                                    document.getElementById('activity').innerHTML = html;
+                                })
+                                .catch(error => console.error('Error fetching /history:', error));
+                        });
+                        document.getElementById("tags").addEventListener("change", function () {
+                            console.log(this.value);
+                        });
+
+                    
+                    </script>
+                    <script>
+                        function logId(id) {
+                            console.log('Deleting ID:', id);
+                    
+                            fetch(`/deleteData?id=${id}`, {
+                                method: 'DELETE'
+                            })
+                            .then(result => {
+                                const month = document.getElementById("month").value;
+                                const tag = document.getElementById("tags").value;
+                    
+                                // Fetch /history with the selected date as a query parameter
+                                fetch(`/historyData?month=${month}&&tag=${tag}`)
+                                    .then(response => {
+                                        //console.log('Fetch response:', response);
+                                        return response.text();
+                                    })
+                                    .then(html => {
+                                        //console.log('Received HTML:', html);
+                                        // Update the content of the history container
+                                        document.getElementById('activity').innerHTML = html;
+                                        const month = document.getElementById("month").value;
+
+                                        
+                                // Fetch /history with the selected date as a query parameter
+                                        window.location.reload();
+                                    })
+                                    .catch(error => console.error('Error fetching /history:', error));
+                            })
+                            .catch(error => console.error('Error fetching data:', error));
+                        }
+                    </script>
+
+                        <div class="responsive-div" style="display: flex">
+                           <!-- <div><p style= "height: 0; padding: 12px 60px; font-size: 30px; font-weight:500; display: flex;"><b>Summary</b></p></div> -->
+                           <script src='https://cdn.plot.ly/plotly-2.27.0.min.js'></script>
+                           <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+                                <div id = 'chart' class="top-div" ></div>
+                                <div id = 'bar' class="bottom-div" ></div>
+                           <script>
+                            document.addEventListener("DOMContentLoaded", function () {
+                            // Function to fetch and update content
+                            function updateContent() {
+                                const month = document.getElementById("month").value;
+
+                                // Fetch /history with the selected date as a query parameter
+                                fetch(`/pie?month=${month}`)
+                                    .then(response => response.json())
+                                    .then(data => {
+
+                                        const chartContainer = document.getElementById('chart');
+
+                                        if (data.length === 0) {
+                                            chartContainer.style.display = 'none';
+                                        // hide the chart
+                                        return;
+                                        } 
+                                        
+                                        chartContainer.style.display = 'block';
+                                        // Extract labels and values from the data
+                                        const labels = data.map(entry => entry.tag);
+                                        const values = data.map(entry => entry.netBalance);
+                                        const colors = ['red', 'green', 'blue', 'orange', 'purple', 'pink'];
+                                        const hoverText = data.map(entry => `${entry.tag}: ${entry.netBalance}`);
+                                        // Create a pie chart using Plotly.js
+                                        const chartData = [{
+                                        labels,
+                                        values,
+                                        type: 'pie',
+                                        hoverinfo: 'label+percent', 
+                                        text: hoverText, 
+                                        marker: {
+                                            line: {
+                                                color: 'black', // Specify the color of the pie chart lines
+                                                width: 2 // Specify the width of the pie chart lines
+                                            }
+                                        }}];
+
+                                        const chartLayout = {
+                                        // title: `This ${month} Expense Summary`,
+                                        title: `Expense Summary`,
+                                        height: 350, 
+                                        width: 400
+                                        };
+
+                                        Plotly.newPlot('chart', chartData, chartLayout);
+                                    })
+                                    .catch(error => console.error('Error fetching /pie', error));
+                            }
+
+                            // Event listener for month change
+                             document.getElementById("month").addEventListener("click", function () {
+                                 updateContent();
+                             });
+                            updateContent();
+                        });
+                    </script>
+
+                    <!-- bar chart -->
+                        <script>
+                           function updateContent() {
+                            const selectedMonth = document.getElementById("month").value;
+                        
+                            // Fetch data with the selected month as a query parameter
+                            fetch(`/bar?month=${month}`)
+                                .then(response => response.json())
+                                .then(data => {
+                                    // const hasData = data.length > 0 && data[0].sumIncome !== undefined && data[0].sumExpense !== undefined;
+                                    const selectedMonthData = data.find(entry => entry.month === selectedMonth);
+
+                                    // Check if the selected month has valid sumIncome and sumExpense
+                                    const hasData = selectedMonthData && selectedMonthData.sumIncome !== undefined && selectedMonthData.sumExpense !== undefined;
+
+                                    const chartContainer = document.getElementById('bar');
+
+                                    if (!hasData) {
+                                        chartContainer.style.display = 'none';
+                                        return;
+                                    }
+                                        
+                                        chartContainer.style.display = 'block';
+                                    const months = data.map(entry => entry.month);
+                                    const sumIncome = data.map(entry => entry.sumIncome);
+                                    const sumExpense = data.map(entry => entry.sumExpense);
+
+                                    // Create two bar charts using Plotly.js
+                                    const trace1 = {
+                                        x: months, 
+                                        y: sumIncome,
+                                        name: 'Income',
+                                        type: 'bar'
+                                    };
+
+                                    const trace2 = {
+                                        x: months, 
+                                        y: sumExpense,
+                                        name: 'Expense',
+                                        type: 'bar'
+                                    };
+
+                                    const layout = {
+                                        barmode: 'group', // Grouped bar chart
+                                        title: 'Total Income and Expense by Month',
+                                        xaxis: {
+                                            title: 'Month'
+                                        },
+                                        yaxis: {
+                                            title: 'Amount',
+                                            rangemode: 'tozero'
+                                        },
+                                        height: 350, 
+                                        width: 400 
+                                    };
+
+                                    // Create the bar charts
+                                    Plotly.newPlot('bar', [trace1, trace2], layout);
+                                                                
+                                })
+                                .catch(error => console.error('Error fetching /bar', error));
+                        }
+                        
+                        // Event listener for month change
+                        document.getElementById("month").addEventListener("change", function () {
+                            updateContent();
+                        });
+                        
+                        // Initial update
+                        updateContent();
+                    </script>
+
+                        </div>
+                    
+                    
+                </div>
+                
+        </div>
+        </section>
+
+
+
+        <script>
+            // Function to set the mode in localStorage
+            function setMode(mode) {
+                localStorage.setItem('mode', mode);
+            }
+        
+            const body = document.querySelector('body'),
+                sidebar = body.querySelector('nav'),
+                toggle = body.querySelector(".toggle"),
+                modeSwitch = body.querySelector(".toggle-switch"),
+                modeText = body.querySelector(".mode-text");
+        
+            // Function to toggle the sidebar
+            toggle.addEventListener("click", () => {
+                sidebar.classList.toggle("close");
+            });
+        
+            // Function to toggle between dark and light modes
+            modeSwitch.addEventListener("click", () => {
+                body.classList.toggle("dark");
+        
+                if (body.classList.contains("dark")) {
+                    modeText.innerText = "Light mode";
+                    setMode('dark'); // Save the mode in localStorage
+                } else {
+                    modeText.innerText = "Dark mode";
+                    setMode('light'); // Save the mode in localStorage
+                }
+            });
+        
+            // Check the mode stored in localStorage on page load
+            const storedMode = localStorage.getItem('mode');
+            if (storedMode) {
+                body.classList.add(storedMode);
+                if (storedMode === 'dark') {
+                    modeText.innerText = "Light mode";
+                }
+            }
+        </script>
+    </div>
+
+
+
+    </div>
+
+</body>
+
+</html>

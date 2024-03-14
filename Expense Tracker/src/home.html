@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+
+        <link rel="stylesheet" href="homestyle.css" />
+
+         <!----===== Boxicons CSS ===== -->
+         <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
+
+        <!----===== Iconscout CSS ===== -->
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    
+    
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&family=Noto+Emoji:wght@300&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" /> -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>  
+    <script src="addDate.js"></script> 
+    
+    <!-- <script src="https://unpkg.com/luxon@2.0.2/build/global/luxon.min.js"></script> -->
+
+    
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+        
+         <title>Expense Tracker</title>
+         <style>
+            /* Custom styles for the calendar */
+            #custom-calendar {
+              display: flex;
+              flex-wrap: wrap;
+              gap: 5px;
+              padding: 10px;
+            }
+        
+            #custom-calendar button {
+              padding: 5px 10px;
+              cursor: pointer;
+              border: 1px solid #ccc;
+              background-color: #fff;
+              text-align: center;
+            }
+          </style>
+      </head>
+     <body>
+        <div class="container">
+            <div class="container-sidebar">
+                <nav class="sidebar close">
+                <header>
+                    <div class="image-text">
+                        <span class="image">
+                            <img src="logo_cs266.png" alt="">
+                        </span>
+                        <div class="text logo-text">
+                            <span class="name">Expense Tracker</span>
+                            <span class="profession">CS266</span>
+                        </div>
+                    </div>
+                    <i class='bx bx-chevron-right toggle'></i>
+                </header>
+                
+                <div class="menu-bar">
+                  <div class="menu">
+                    <ul class="menu-links">
+                        <li class="nav-link">
+                            <a href="/">
+                                <i class='bx bx-home-alt icon'></i>
+                                <span class="text nav-text">HOME</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-link">
+                            <a href="tag">
+                                <i class='bx bx-tag icon'></i>
+                                <span class="text nav-text">TAG</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-link">
+                            <a href="history">
+                                <i class='bx bx-history icon'></i>
+                                <span class="text nav-text">HISTORY</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+
+                    <div class="bottom-content">
+                        <!-- <li class="">
+                            <a href="#">
+                                <i class='bx bx-log-out icon' ></i>
+                                <span class="text nav-text">Logout</span>
+                            </a>
+                        </li> -->
+                        <li class="mode" id="theme-toggle">
+                            <div class="sun-moon">
+                                <i class='bx bx-moon icon moon'></i>
+                                <i class='bx bx-sun icon sun'></i>
+                            </div>
+                            <span class="mode-text text">Dark mode</span>
+                            <div class="toggle-switch">
+                                <span class="switch"></span>
+                            </div>
+                        </li>         
+                        
+                    </div>
+                </div>
+            </nav>
+
+            <section class="home">
+               
+                   
+                
+                <div class="center">
+                    <div class="container-home">
+                        <div id="activity">
+
+                        </div>
+                        
+                        <script type="module">
+                            import { DateTime } from 'https://cdn.skypack.dev/luxon';
+                                document.addEventListener("DOMContentLoaded", function () {
+                                    
+                                    const today = DateTime.local().toJSDate();
+                                    //const Luxonformatt = Luxontoday.toFormat('yyyy-MM-ddTHH:mm:ssZZ');
+
+                                    //const today = new Date(Luxonformatt);
+
+                                    console.log("Today: " + today);
+
+                                            // Get the components of the date
+                                            const year = today.getFullYear();
+                                            const month = String(today.getMonth() + 1).padStart(2, '0'); // Months are zero-based, so add 1
+                                            const day = String(today.getDate()).padStart(2, '0');
+
+                                            // Format the date as "YYYY-MM-DD"
+                                            const formattedDate = `${year}-${month}-${day}`;
+                                    console.log("1 year date: " + formattedDate);
+                                // Function to fetch and update content
+                                function updateContent() {
+                                    const month = formattedDate;
+                                    console.log("HEY!")
+
+                                    // Fetch /history with the selected date as a query parameter
+                                    fetch(`/transacData?month=${month}`)
+                                        .then(response => response.text())
+                                        .then(html => {
+                                            // Update the content of the history container
+                                            document.getElementById('activity').innerHTML = html;
+                                        })
+                                        .catch(error => console.error('Error fetching /history:', error));
+                                }
+
+                                // Event listener for month change
+                                 document.getElementById("transaction").addEventListener("click", function () {
+                                     updateContent();
+                                 });
+
+                                //  document.getElementById("removeTransaction").addEventListener("click", function () {
+                                //      updateContent();
+                                //  });
+
+                                // Call the function on page load
+                                updateContent();
+                            });
+                        </script>
+                        
+                        <script>
+                            function logId(id) {
+                                    console.log('Deleting ID:', id);
+
+                                    fetch(`/deleteData?id=${id}`, {
+                                        method: 'DELETE'
+                                    })
+                                    .then(result => {
+
+                                        // Fetch the updated content after successful deletion
+                                        const today = new Date();
+                                        const year = today.getFullYear();
+                                        const month = String(today.getMonth() + 1).padStart(2, '0');
+                                        const day = String(today.getDate()).padStart(2, '0');
+                                        const formattedDate = `${year}-${month}-${day}`;
+
+                                        console.log('Formatted date:', formattedDate);
+
+                                        // Fetch /history with the selected date as a query parameter
+                                        fetch(`/transacData?month=${formattedDate}`)
+                                            .then(response => {
+                                                //console.log('Fetch response:', response);
+                                                return response.text();
+                                            })
+                                            .then(html => {
+                                                //console.log('Received HTML:', html);
+                                                // Update the content of the history container
+                                                document.getElementById('activity').innerHTML = html;
+                                            })
+                                            .catch(error => console.error('Error fetching /history:', error));
+                                    })
+                                    .catch(error => console.error('Error fetching data:', error));
+                                }
+                          </script>
+                        
+                        
+                      <!-- <div class="text">Expense Tracker</div> -->
+                        <!-- <div class="title">
+                            <i class="uil uil-bill"></i>
+                            <span class="text" >Your Balance</span>
+                            <span class="text" id="balance">{balance}</span>
+                        </div> -->
+
+                        <!-- <div class="boxes">
+                            <div class="box box1">
+                                <i class="uil uil-money-bill"></i>
+                                <span class="text">Income</span>
+                                <span class="number" id="income">{income}</span>
+                            </div>
+                            <div class="box box2">
+                                <i class="uil uil-money-withdrawal"></i>
+                                <span class="text">Expense</span>
+                                <span class="number" id="expense">{expense}</span>
+                            </div>
+                        </div> -->
+
+                        <!-- <script>
+                          // Fetch JSON data from the server
+                          fetch('/user/data')
+                            .then(response => response.json())
+                            .then(jsonData => {
+                              // Update the HTML content with the received JSON data
+                              document.getElementById('income').textContent = jsonData.incomeSum;
+                              document.getElementById('expense').textContent = jsonData.expenseSum;
+                              document.getElementById('balance').textContent = jsonData.balance;
+                              console.log('hi');
+                            })
+                            .catch(error => {
+                              console.error('Error fetching JSON:', error);
+                            });
+                        </script> -->
+
+                        <!-- <div class="activity">
+                            <div class="title">
+                                <i class="uil uil-clock-three"></i>
+                                <span class="text">Recent Activity</span>
+                            </div>
+
+                            <div class="activity-data">
+                                <div class="data date">
+                                    <span class="data-title">Date</span>
+                                    <span class="data-list">{date}</span>
+                                </div>  
+                                
+                                <div class="data amout">
+                                    <span class="data-title">Amount</span>
+                                    <span class="data-list">{amount}</span>
+                                </div>  
+                                
+                                <div class="data tag">
+                                    <span class="data-title">Tag</span>
+                                    <span class="data-list">{tag}</span>
+                                </div> 
+                            </div>
+                        </div> -->
+
+                    </div>
+
+                    
+
+                    <div class="container-input">
+                        <center>
+                            <span class="text">INPUT</span>
+                        </center>    
+                           
+                        <div>
+                          <span class="selection"></span>
+                          <section id="pattern">
+                            <div class="option">
+                                <div class="option1"><input type="radio" id="incometype" name="sample" value="income" checked>
+                                <label class ="data-title" for="inputType"><span>Income</span></label></div>
+                                <div class="option2"><input type="radio" id="expensetype" name="sample" value="expense">
+                                <label class ="data-title" ,for="inputType"><span>Expense</span></label></div>
+                            </div>
+                
+                          </section>
+                          
+                            <script type="text/javascript">
+                              
+                                // Main
+                              
+                                document.addEventListener("DOMContentLoaded", setup);
+                              
+                                // Body functions
+                              
+                                function setup() {
+                                  forEachElement(SEGMENTED_CONTROL_BASE_SELECTOR, elem => {    
+                                    elem.addEventListener("change", updatePillPosition);
+                                  })
+                                  window.addEventListener("resize", updatePillPosition); // Prevent pill from detaching from element when window resized. Becuase this is rare I haven't bothered with throttling the event 
+                                }
+                              
+                                function updatePillPosition() {    
+                                  forEachElement(SEGMENTED_CONTROL_INDIVIDUAL_SEGMENT_SELECTOR, (elem, index) => {
+                                    if (elem.checked) moveBackgroundPillToElement(elem, index);
+                                  })
+                                }
+                              
+                                function moveBackgroundPillToElement(elem, index) {
+                                  document.querySelector(SEGMENTED_CONTROL_BACKGROUND_PILL_SELECTOR).style.transform = "translateX(" + (elem.offsetWidth * index) + "px)";
+                                }
+                              
+                                // Helper functions
+                              
+                                function forEachElement(className, fn) {
+                                  Array.from(document.querySelectorAll(className)).forEach(fn);
+                                }
+                              
+                              </script>
+                
+                        </div>
+
+                        <div class="input-all-container">
+                            <div class="inputdate">
+                                <form >
+                                <span class="data-title">Date</span>
+                                
+                                    <!-- <input type="date" required /> -->
+                                    <button type="button" id="date" i class="fa-solid fa-calendar-check"></button>
+                                    <span id="selectedDate"></span>
+
+                                    
+
+                                    <script type="module">
+                                        import { DateTime } from 'https://cdn.skypack.dev/luxon';
+                                        //const today = new Date();
+                                        const todays = DateTime.local();
+                                        // If the user didn't choose a date, set it to today
+                                            const formattedDate = todays.toFormat('yyyy-MM-dd');
+                                        
+                                              // Update the selected date element with the default date
+                                              document.getElementById('selectedDate').innerText = `${formattedDate}`;
+                                            
+                                        document.getElementById('date').addEventListener('click', async () => {
+                                          try {
+                                            const today = DateTime.local();
+                                            const formattedDate = today.toFormat('yyyy-MM-dd');
+                                            const oneYearAgo = today.minus({ years: 1 }).toFormat('yyyy-MM-dd');
+                                        
+                                            const { value: date } = await Swal.fire({
+                                              title: "Select Date",
+                                              input: "date",
+                                              didOpen: () => {
+                                                const maxDate = formattedDate;
+                                                const minDate = oneYearAgo;
+                                                Swal.getInput().min = minDate;
+                                                Swal.getInput().max = maxDate;
+                                              },
+                                              showCancelButton: true,
+                                              inputValidator: (value) => {
+                                                if (!value) {
+                                                  return "Please select a date.";
+                                                }else {
+                                                  
+                                                    if (!selectedDate) {
+                                                        return false;
+                                                    }
+
+                                                    // Convert the selectedDate string to a Date object
+                                                    const selectedDateTime = DateTime.fromISO(selectedDate).toFormat('yyyy-MM-dd');
+
+                                                    // Get today's date
+                                                    const today = DateTime.local().toFormat('yyyy-MM-dd');
+
+                                                    // Calculate the date from one year ago
+                                                    const oneYearAgo = DateTime.local().minus({ years: 1 }).toFormat('yyyy-MM-dd');
+                                                    return selectedDateTime >= oneYearAgo && selectedDateTime <= today;
+                                                }
+                                              }
+                                            });
+                                        
+                                            if (date) {
+                                              Swal.fire("Transaction Date", date);
+                                              // Update the selected date element with the chosen date
+                                              document.getElementById('selectedDate').innerText = `${date}`;
+                                            } else {
+                                              // If the user didn't choose a date, set it to today
+                                              const defaultDate = today.toFormat('yyyy-MM-dd');
+                                              Swal.fire("Transaction Date", defaultDate);
+                                              // Update the selected date element with the default date
+                                              document.getElementById('selectedDate').innerText = `${defaultDate}`;
+                                            }
+                                          } catch (error) {
+                                            console.error("Error displaying date input:", error);
+                                          }
+                                        });
+                                        </script>
+                                    <div class="inputamount">
+                                        <span class="data-title">Amount</span>
+                                        <input type="number" id="tAmount" min="0" required>
+                                    </div>
+                                    <div class="inputtag">
+                                        <span class="data-title">Tag</span>
+                                        
+                                        <div class="data-list">
+                                        <!-- Drop down tags goes here -->
+                                        </div>
+                                        <button type="button" id="add" i class="fa-solid fa-plus"></button>
+                                        <script>
+                                            document.addEventListener('DOMContentLoaded', function () {
+                                    const addButton = document.getElementById('add');
+
+                                    // Define submitForm function
+                                    function submitForm(inputValue) {
+                                        // ตัวอย่าง: ส่ง request ไปยัง server
+                                        fetch('/addtag', {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                            },
+                                            body: JSON.stringify({ tag: inputValue }),
+                                        })
+                                        .then(() => {
+                                            // Reload the page after the request is successful
+                                            location.reload();
+                                        })
+                                        .catch(error => {
+                                            console.error('Error:', error);
+                                        });
+                                    }
+
+                                    // Check if the event listener is already attached
+                                    if (!addButton.hasListener) {
+                                        addButton.hasListener = true;
+
+                                        addButton.addEventListener('click', function () {
+                                            Swal.fire({
+                                                title: 'Create New Tag',
+                                                input: 'text',
+                                                inputPlaceholder: 'Type your name tag here',
+                                                inputAttributes: {
+                                                    'aria-label': 'Type your name tag',
+                                                    'style': 'width: 85%; box-sizing: border-box;'
+                                                },
+                                                showCancelButton: true,
+                                                inputValidator: (value) => {
+                                                    if (!value) {
+                                                        return 'You need to write something!';
+                                                    }
+                                                },
+                                                preConfirm: (inputValue) => {
+                                                    // Process the input value as needed
+                                                    submitForm(inputValue);
+                                                },
+                                            }).then((result) => {
+                                                if (result.isConfirmed) {
+                                                    Swal.fire(`Input value: ${result.value}`);
+                                                }
+                                            });
+                                        });
+                                    }
+                                });
+                                            </script>
+                                    </div>
+                                    <div class="inputtext">
+                                        <span class="data-title">Memo</span>
+                                        <input type="text" id="tMemo" required>
+                                    </div>
+                                    
+                                    <button type="submit" id="transaction" onclick="submitForm(event)">Complete</button>
+                                </form>
+
+
+                                <script>
+                                    function submitForm(event) {
+                                      const type = document.querySelector('input[name="sample"]:checked').value;
+                                      const date = document.getElementById('selectedDate').innerText;
+                                      // const type = document.getElementById('inputType').value;
+                                      const amount = document.getElementById('tAmount').value;
+                                      const tag = document.getElementById('tags').value;
+                                      const memo = document.getElementById('tMemo').value;
+                                  
+                                      if (!amount ||!memo) {
+                                            alert('Please fill in all required fields.');
+                                            return; // Stop further execution
+                                        }
+                                        event.preventDefault();
+                                        document.getElementById('tAmount').value = '';
+                                        document.getElementById('tMemo').value = '';
+                                        document.getElementById('tags').value = 'Other';
+                                      // Create an object with the data
+                                      const transactionData = {
+                                        input_type: type,
+                                        date: date,
+                                        amount: amount,
+                                        tag: tag,
+                                        text: memo
+                                      };
+                                  
+                                      // Make an AJAX request
+                                      fetch('/submitForm', {
+                                        method: 'POST',
+                                        headers: {
+                                          'Content-Type': 'application/json',
+                                        },
+                                        body: JSON.stringify(transactionData),
+                                      })
+                                      .then(response => response.json())
+                                      .then(data => {
+                                        console.log('Success:', data);
+                                        // // Fetch JSON data from the server
+                                        //   fetch('/user/data')
+                                        //     .then(response => response.json())
+                                        //     .then(jsonData => {
+                                        //       // Update the HTML content with the received JSON data
+                                        //       document.getElementById('income').textContent = jsonData.incomeSum;
+                                        //       document.getElementById('expense').textContent = jsonData.expenseSum;
+                                        //       document.getElementById('balance').textContent = jsonData.balance;
+                                        //       console.log('hi');
+                                        //     })
+                                        //     .catch(error => {
+                                        //       console.error('Error fetching JSON:', error);
+                                        //     });
+                                        location.reload();
+                                      
+                                        // You can handle success (e.g., show a success message)
+                                      })
+
+                                      .catch((error) => {
+                                        //console.error('Error:', error);
+                                        // Handle errors (e.g., show an error message)
+                                      });
+                                    }
+                                    // function fetchData() {
+                                    //   fetch('/')
+                                    //     .then(response => response.json())
+                                    //     .then(data => {
+                                    //       // Process the data
+                                    //       displayData(data);
+                                    //     })
+                                    //     .catch(error => {
+                                    //       // Handle errors
+                                    //       console.error('Error:', error);
+                                    //     });
+                                    // }
+                                    
+                                  </script>
+                            </div>
+
+                           
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </section>
+
+            
+
+            <script>
+                // Function to set the mode in localStorage
+                function setMode(mode) {
+                    localStorage.setItem('mode', mode);
+                }
+            
+                const body = document.querySelector('body'),
+                    sidebar = body.querySelector('nav'),
+                    toggle = body.querySelector(".toggle"),
+                    modeSwitch = body.querySelector(".toggle-switch"),
+                    modeText = body.querySelector(".mode-text");
+            
+                // Function to toggle the sidebar
+                toggle.addEventListener("click", () => {
+                    sidebar.classList.toggle("close");
+                });
+            
+                // Function to toggle between dark and light modes
+                modeSwitch.addEventListener("click", () => {
+                    body.classList.toggle("dark");
+            
+                    if (body.classList.contains("dark")) {
+                        modeText.innerText = "Light mode";
+                        setMode('dark'); // Save the mode in localStorage
+                    } else {
+                        modeText.innerText = "Dark mode";
+                        setMode('light'); // Save the mode in localStorage
+                    }
+                });
+            
+                // Check the mode stored in localStorage on page load
+                const storedMode = localStorage.getItem('mode');
+                if (storedMode) {
+                    body.classList.add(storedMode);
+                    if (storedMode === 'dark') {
+                        modeText.innerText = "Light mode";
+                    }
+                }
+            </script>
+            </div>
+
+
+            
+        </div>
+
+     </body> 
+</html>

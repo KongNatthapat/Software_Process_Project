@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+
+    <link rel="stylesheet" href="tagstyle.css">
+
+    <!----===== Boxicons CSS ===== -->
+    <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
+
+    <!----===== Iconscout CSS ===== -->
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>  
+    
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+    <title>Tag</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="container-sidebar">
+            <nav class="sidebar close">
+                <header>
+                    <div class="image-text">
+                        <span class="image">
+                            <img src="logo_cs266.png" alt="">
+                        </span>
+                        <div class="text logo-text">
+                            <span class="name">Expense Tracker</span>
+                            <span class="profession">CS266</span>
+                        </div>
+                    </div>
+                    <i class='bx bx-chevron-right toggle'></i>
+                </header>
+
+                <div class="menu-bar">
+                    <div class="menu">
+                        <ul class="menu-links">
+                            <li class="nav-link">
+                                <a href="/">
+                                    <i class='bx bx-home-alt icon'></i>
+                                    <span class="text nav-text">HOME</span>
+                                </a>
+                            </li>
+
+                            <li class="nav-link">
+                                <a href="tag">
+                                    <i class='bx bx-tag icon'></i>
+                                    <span class="text nav-text">TAG</span>
+                                </a>
+                            </li>
+
+                            <li class="nav-link">
+                                <a href="history">
+                                    <i class='bx bx-history icon'></i>
+                                    <span class="text nav-text">HISTORY</span>
+                                </a>
+                            </li>
+
+                            
+                        </ul>
+                    </div>
+
+                    <div class="bottom-content">
+                        <!-- <li class="">
+                            <a href="#">
+                                <i class='bx bx-log-out icon' ></i>
+                                <span class="text nav-text">Logout</span>
+                            </a>
+                        </li> -->
+                        <li class="mode">
+                            <div class="sun-moon">
+                                <i class='bx bx-moon icon moon'></i>
+                                <i class='bx bx-sun icon sun'></i>
+                            </div>
+                            <span class="mode-text text">Dark mode</span>
+                            <div class="toggle-switch">
+                                <span class="switch"></span>
+                            </div>
+                        </li>
+
+                    </div>
+                </div>
+            </nav>
+
+            <section class="home">
+
+
+                <div class="center">
+                    <div class="container-home">
+                        <div class="text">Tag</div>
+
+                        <div class="activity">
+                            <div class="title">
+                                <i class="uil uil-tag-alt"></i>
+                                <span class="text">All Tag</span>
+                                <div class="inputtag">
+                                    <button type="button" id="add" class="fa-solid fa-plus"></button>
+                                  </div>
+                                  
+                                      
+
+                            </div>
+
+                            <div class="activity-data">
+                                
+                                <ul id="data-list"></ul>
+                                <div class="data tag"></div>
+
+                                <!-- INSERT_DYNAMIC_CONTENT_HERE -->
+
+                                <script>
+                                    document.addEventListener('DOMContentLoaded', function () {
+                                    const addButton = document.getElementById('add');
+
+                                    // Define submitForm function
+                                    function submitForm(inputValue) {
+                                        // ตัวอย่าง: ส่ง request ไปยัง server
+                                        fetch('/addtag', {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                            },
+                                            body: JSON.stringify({ tag: inputValue }),
+                                        })
+                                        .then(() => {
+                                            // Reload the page after the request is successful
+                                            location.reload();
+                                        })
+                                        .catch(error => {
+                                            console.error('Error:', error);
+                                        });
+                                    }
+
+                                    // Check if the event listener is already attached
+                                    if (!addButton.hasListener) {
+                                        addButton.hasListener = true;
+
+                                        addButton.addEventListener('click', function () {
+                                            Swal.fire({
+                                                title: 'Create New Tag',
+                                                input: 'text',
+                                                inputPlaceholder: 'Type your name tag here',
+                                                inputAttributes: {
+                                                    'aria-label': 'Type your name tag',
+                                                    'style': 'width: 85%; box-sizing: border-box;'
+                                                },
+                                                showCancelButton: true,
+                                                inputValidator: (value) => {
+                                                    if (!value) {
+                                                        return 'You need to write something!';
+                                                    }
+                                                },
+                                                preConfirm: (inputValue) => {
+                                                    // Process the input value as needed
+                                                    submitForm(inputValue);
+                                                },
+                                            }).then((result) => {
+                                                if (result.isConfirmed) {
+                                                    Swal.fire(`Input value: ${result.value}`);
+                                                }
+                                            });
+                                        });
+                                    }
+                                });
+
+
+                                document.addEventListener('click', function (event) {
+                                const clickedElement = event.target;
+
+                                // Check if the clicked element is a button with class "tag-button"
+                                if (clickedElement.classList.contains('tag-button')) {
+                                    const tagId = clickedElement.getAttribute('data-tag-id');
+                                    const targetButton = event.target.closest('.tag-button');
+                                    const tagValue = targetButton.textContent.trim();
+
+                                    Swal.fire({
+                                    title: "Delete tag",
+                                    text:`want to delete tag : ${tagValue}?`,
+                                    showDenyButton: true,
+                                    confirmButtonText: "Cancel",
+                                    denyButtonText: "Delete"
+                                    }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        Swal.fire("Changes are not saved", "", "info");
+                                    } else if (result.isDenied) {
+                                        // Perform the deletion in the database
+                                        deleteTag(tagId, tagValue);
+                                    }
+                                    });
+                                }
+                                });
+
+                                function deleteTag(tagId, tagValue) {
+                                // Perform an AJAX request or use the Fetch API to send a request to delete the tag
+                                fetch(`/deleteTag/${tagId}`, {
+                                    method: 'DELETE',
+                                    headers: {
+                                    'Content-Type': 'application/json'
+                                    }
+                                })
+                                    .then(response => response.json())
+                                    .then(data => {
+                                    // Handle the response from the server (you can show a success message or update the UI)
+                                    console.log(data);
+                                    Swal.fire(`Deleted! Tag : ${tagValue}`, "", "success").then(() => {
+                                            location.reload();
+                                        });
+                                    })
+                                    .catch(error => {
+                                    console.error('Error:', error);
+                                    Swal.fire("Error deleting tag", "", "error");
+                                    });
+                                }
+
+                                
+
+                                </script>
+
+                                
+                                
+                            </div>
+                        </div>
+
+
+                    </div>
+                    
+                </div>
+        </div>
+        </section>
+
+
+
+        <script>
+            // Function to set the mode in localStorage
+            function setMode(mode) {
+                localStorage.setItem('mode', mode);
+            }
+        
+            const body = document.querySelector('body'),
+                sidebar = body.querySelector('nav'),
+                toggle = body.querySelector(".toggle"),
+                modeSwitch = body.querySelector(".toggle-switch"),
+                modeText = body.querySelector(".mode-text");
+        
+            // Function to toggle the sidebar
+            toggle.addEventListener("click", () => {
+                sidebar.classList.toggle("close");
+            });
+        
+            // Function to toggle between dark and light modes
+            modeSwitch.addEventListener("click", () => {
+                body.classList.toggle("dark");
+        
+                if (body.classList.contains("dark")) {
+                    modeText.innerText = "Light mode";
+                    setMode('dark'); // Save the mode in localStorage
+                } else {
+                    modeText.innerText = "Dark mode";
+                    setMode('light'); // Save the mode in localStorage
+                }
+            });
+        
+            // Check the mode stored in localStorage on page load
+            const storedMode = localStorage.getItem('mode');
+            if (storedMode) {
+                body.classList.add(storedMode);
+                if (storedMode === 'dark') {
+                    modeText.innerText = "Light mode";
+                }
+            }
+        </script>
+    </div>
+
+
+
+    </div>
+
+</body>
+
+</html>
